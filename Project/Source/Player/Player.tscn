@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://Assets/Placeholder/Player/character_zombie_walk0.png" type="Texture" id=1]
 [ext_resource path="res://Source/Player/Player.gd" type="Script" id=2]
@@ -10,11 +10,10 @@
 [ext_resource path="res://Assets/Placeholder/Player/character_zombie_walk5.png" type="Texture" id=8]
 [ext_resource path="res://Assets/Placeholder/Player/character_zombie_walk7.png" type="Texture" id=9]
 [ext_resource path="res://Assets/Placeholder/Player/character_zombie_walk2.png" type="Texture" id=10]
-[ext_resource path="res://Source/Player/PlayerAnimation.gd" type="Script" id=11]
 [ext_resource path="res://Assets/Placeholder/Player/character_zombie_back.png" type="Texture" id=12]
-
-[sub_resource type="RectangleShape2D" id=1]
-extents = Vector2( 32, 32 )
+[ext_resource path="res://Assets/Placeholder/Player/attack/character_zombie_attack0.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Placeholder/Player/attack/character_zombie_attack2.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Placeholder/Player/attack/character_zombie_attack1.png" type="Texture" id=15]
 
 [sub_resource type="SpriteFrames" id=2]
 animations = [ {
@@ -24,31 +23,44 @@ animations = [ {
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 3 ) ],
-"loop": true,
+"loop": false,
 "name": "idle",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 1 ), ExtResource( 4 ), ExtResource( 10 ), ExtResource( 7 ), ExtResource( 5 ), ExtResource( 8 ), ExtResource( 6 ), ExtResource( 9 ) ],
 "loop": true,
 "name": "walk",
-"speed": 5.0
+"speed": 10.0
 }, {
-"frames": [  ],
-"loop": true,
-"name": "down",
-"speed": 5.0
+"frames": [ ExtResource( 13 ), ExtResource( 15 ), ExtResource( 14 ) ],
+"loop": false,
+"name": "punch",
+"speed": 20.0
 } ]
+
+[sub_resource type="RectangleShape2D" id=3]
+extents = Vector2( 17.5, 29.5 )
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 46, 79.5 )
 
 [node name="Player" type="KinematicBody2D"]
 script = ExtResource( 2 )
 speed = 250
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource( 1 )
-
 [node name="PlayerAnimation" type="AnimatedSprite" parent="."]
 frames = SubResource( 2 )
-animation = "down"
-script = ExtResource( 11 )
+animation = "idle"
 
-[connection signal="animate" from="." to="PlayerAnimation" method="_on_Player_animate"]
+[node name="PunchCollision" type="Area2D" parent="PlayerAnimation" groups=["punch"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerAnimation/PunchCollision"]
+position = Vector2( 73, 71.5 )
+shape = SubResource( 3 )
+disabled = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( 3, 47.5 )
+shape = SubResource( 1 )
+
+[connection signal="animation_finished" from="PlayerAnimation" to="." method="_on_PlayerAnimation_animation_finished"]
